@@ -13,7 +13,6 @@ https://developer.mozilla.org/en-US/docs/Web/API/NodeList
 CHALLENGES
 1. event listener does not work on nodelist
 */
-
 const form = document.querySelector("#search-form");
 const input = document.querySelector("#search-input");
 const inOrderBtn = document.querySelector("#inOrderBtn");
@@ -24,10 +23,55 @@ const display = document.querySelector(".search-result-display");
 const countryItems = display.childNodes;
 let allCountryArr = [];
 let onDisplayCountries = [];
-//Identifier to check ascending and descending orders
 let isItAtoZ = true;
-// Temporal DOM storage for ascending and descending order display
-const docFrag = document.createDocumentFragment();
+
+//get countries data
+const getAllCountries = async () => {
+  try {
+    let countryRawData = await fetch("https://restcountries.eu/rest/v2/all");
+
+    let countryData = await countryRawData.json();
+    let countryDisplay = await countryData.forEach(country => {
+      for (let key in country) {
+        if (key === "name") {
+          let uiCountryName = country.name.toUpperCase();
+          let newDiv = document.createElement("div");
+          newDiv.textContent = uiCountryName;
+          newDiv.className = "countryItem";
+          display.appendChild(newDiv);
+        }
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//show searching results (matching regarless of location)
+const getSearchingCountries = input => {
+  for (let i = 1; i < countryItems.length; i++) {
+    let countryItemText = countryItems[i].textContent;
+
+    if (countryItemText.includes(input) == true) {
+      countryItems[i].style.display = "";
+    } else {
+      countryItems[i].style.display = "none";
+    }
+  }
+};
+
+// show searhing results (matching from the first location)
+const searchingCountriesInOrder = input => {
+  for (let i = 1; i < countryItems.length; i++) {
+    let countryItemText = countryItems[i].textContent;
+
+    if (countryItemText.indexOf(input) == 0) {
+      countryItems[i].style.display = "";
+    } else {
+      countryItems[i].style.display = "none";
+    }
+  }
+};
 
 const createCountryArr = () => {
   for (let i = 1; i < countryItems.length; i++) {
@@ -49,52 +93,12 @@ const clearDisplay = () => {
 };
 
 const removeTempDOM = () => {
-  // if (countryItems.length > 251) {
-  //   for (let i = 1; i < countryItems.length; i++) {
-  //     console.log(countryItems[i]);
-  //   }
-  // }
-
   if (countryItems.length > 251) {
     onDisplayCountries.forEach(country => {
       display.removeChild(country);
     });
   }
   console.log(countryItems);
-  /*
-  if (countryItems.length > 251) {
-    for (let i = 1; i < countryItems.length; i++) {
-      console.log("loop through all");
-      console.log(countryItems[i]);
-      if (countryItems[i].className === "countryTempItem") {
-        console.log("identify temp items");
-        console.log(countryItems[i]);
-        //display.removeChild(countryItems[i]);
-        countryItems[i].parentNode.removeChild(countryItems[i]);
-      }
-    }
-  }
-  */
-  /*
-  if (countryItems.length > 251) {
-    for (let i = 1; i < countryItems.length; i++) {
-      if (countryItems[i].className === "countryTempItem") {
-        let tempItem = document.querySelector(".coutryTempItem")
-        display.removeChild(tempItem)
-      }
-      if (
-        countryItems[i].textContent === "HONG KONG" ||
-        countryItems[i].textContent ===
-          "KOREA (DEMOCRATIC PEOPLE'S REPUBLIC OF)" ||
-        countryItems[i].textContent === "REPUBLIC OF KOSOVO" ||
-        countryItems[i].textContent === "KOREA (REPUBLIC OF)"
-      ) {
-        console.log("lets see");
-        console.log(countryItems[i]);
-      }
-    }
-  }
-  */
 };
 
 const createTempDOM = () => {
@@ -106,55 +110,7 @@ const createTempDOM = () => {
   });
 };
 
-//get countries data
-const getAllCountries = async () => {
-  try {
-    let countryRawData = await fetch("https://restcountries.eu/rest/v2/all");
-
-    let countryData = await countryRawData.json();
-    //countryData.reverse();
-    let countryDisplay = await countryData.forEach(country => {
-      for (let key in country) {
-        if (key === "name") {
-          let uiCountryName = country.name.toUpperCase();
-          let newDiv = document.createElement("div");
-          newDiv.textContent = uiCountryName;
-          newDiv.className = "countryItem";
-          display.appendChild(newDiv);
-        }
-      }
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-//show search result
-const getSearchingCountries = input => {
-  for (let i = 1; i < countryItems.length; i++) {
-    let countryItemText = countryItems[i].textContent;
-
-    if (countryItemText.includes(input) == true) {
-      countryItems[i].style.display = "";
-    } else {
-      countryItems[i].style.display = "none";
-    }
-  }
-};
-
-const searchingCountriesInOrder = input => {
-  for (let i = 1; i < countryItems.length; i++) {
-    let countryItemText = countryItems[i].textContent;
-
-    if (countryItemText.indexOf(input) == 0) {
-      countryItems[i].style.display = "";
-    } else {
-      countryItems[i].style.display = "none";
-    }
-  }
-};
-
-//NODELIST
+// Arragne in ascending order
 const arrangeAtoZ = () => {
   //in ascending order
   onDisplayCountries = onDisplayCountries.sort((a, b) => {
@@ -169,6 +125,7 @@ const arrangeAtoZ = () => {
   });
 };
 
+//Arrange in descending order
 const arrangeZtoA = () => {
   onDisplayCountries = onDisplayCountries.sort((a, b) => {
     let countryA = a.textContent;
@@ -182,23 +139,20 @@ const arrangeZtoA = () => {
   });
 };
 
-//When DOM Loaded
+// ========== When DOM Loaded ========== //
 document.addEventListener("DOMContentLoaded", function() {
   getAllCountries();
 });
 
-//In the input field
+// ========== In the input field ========== //
 input.addEventListener("keyup", function() {
   let apiEnding = `name/${input.value.toLowerCase()}`;
   let userInput = input.value.toUpperCase();
   getSearchingCountries(userInput);
   console.log(countryItems);
-
-  // createCountryArr();
-  // console.log(countryArr);
 });
 
-// When the Search in Order button is clicked
+// ========== When the Search in Order button is clicked ========== //
 inOrderBtn.addEventListener("click", function() {
   let userInput = input.value.toUpperCase();
   searchingCountriesInOrder(userInput);
@@ -211,40 +165,24 @@ anyPositionBtn.addEventListener("click", function() {
   getSearchingCountries(userInput);
 });
 
-//Sort button
+// ========== Sort button ========== //
 arrowBtn.addEventListener("click", function() {
   allCountryArr = [];
   onDisplayCountries = [];
   createCountryArr();
   filterDisplaidCountries();
-  //console.log(onDisplayCountries);
 
   if (isItAtoZ === true) {
-    arrangeZtoA(); // undefined
-    //console.log(onDisplayCountries);
+    arrangeZtoA();
     clearDisplay();
     createTempDOM();
-    console.log("after createtemp");
-    console.log(countryItems);
-
     removeTempDOM();
-    // console.log("after remove temp");
-    // console.log(countryItems);
     isItAtoZ = false;
   } else {
-    arrangeAtoZ(); // undefined
+    arrangeAtoZ();
     clearDisplay();
     createTempDOM();
-
-    // console.log("after createtemp");
-    console.log(countryItems);
     removeTempDOM();
     isItAtoZ = true;
   }
-  /*erase bottom*/
-
-  // console.log("after remove");
-  // for (let i = 1; i < countryItems.length; i++) {
-  //   console.log(countryItems[i]);
-  // }
 });
