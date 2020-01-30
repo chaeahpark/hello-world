@@ -48,27 +48,62 @@ const clearDisplay = () => {
   }
 };
 
+const removeTempDOM = () => {
+  // if (countryItems.length > 251) {
+  //   for (let i = 1; i < countryItems.length; i++) {
+  //     console.log(countryItems[i]);
+  //   }
+  // }
+
+  if (countryItems.length > 251) {
+    onDisplayCountries.forEach(country => {
+      display.removeChild(country);
+    });
+  }
+  console.log(countryItems);
+  /*
+  if (countryItems.length > 251) {
+    for (let i = 1; i < countryItems.length; i++) {
+      console.log("loop through all");
+      console.log(countryItems[i]);
+      if (countryItems[i].className === "countryTempItem") {
+        console.log("identify temp items");
+        console.log(countryItems[i]);
+        //display.removeChild(countryItems[i]);
+        countryItems[i].parentNode.removeChild(countryItems[i]);
+      }
+    }
+  }
+  */
+  /*
+  if (countryItems.length > 251) {
+    for (let i = 1; i < countryItems.length; i++) {
+      if (countryItems[i].className === "countryTempItem") {
+        let tempItem = document.querySelector(".coutryTempItem")
+        display.removeChild(tempItem)
+      }
+      if (
+        countryItems[i].textContent === "HONG KONG" ||
+        countryItems[i].textContent ===
+          "KOREA (DEMOCRATIC PEOPLE'S REPUBLIC OF)" ||
+        countryItems[i].textContent === "REPUBLIC OF KOSOVO" ||
+        countryItems[i].textContent === "KOREA (REPUBLIC OF)"
+      ) {
+        console.log("lets see");
+        console.log(countryItems[i]);
+      }
+    }
+  }
+  */
+};
+
 const createTempDOM = () => {
   onDisplayCountries.forEach(country => {
     let div = document.createElement("div");
     div.className = "countryTempItem";
     div.textContent = country.textContent;
-    docFrag.appendChild(div);
-    display.appendChild(docFrag);
+    display.appendChild(div);
   });
-};
-
-const removeDuplicatedDOM = () => {
-  for (let i = 1; i < countryItems.length; i++) {
-    for (let j = 1; j < countryItems.length; j++) {
-      if (
-        countryItems[i].textContent === countryItems[j].textContent &&
-        countryItems[j].className === "countryTempItem"
-      ) {
-        display.removeChild(countryItems[j]);
-      }
-    }
-  }
 };
 
 //get countries data
@@ -157,6 +192,7 @@ input.addEventListener("keyup", function() {
   let apiEnding = `name/${input.value.toLowerCase()}`;
   let userInput = input.value.toUpperCase();
   getSearchingCountries(userInput);
+  console.log(countryItems);
 
   // createCountryArr();
   // console.log(countryArr);
@@ -177,27 +213,38 @@ anyPositionBtn.addEventListener("click", function() {
 
 //Sort button
 arrowBtn.addEventListener("click", function() {
-  // removeDuplicatedDOM();
   allCountryArr = [];
   onDisplayCountries = [];
   createCountryArr();
   filterDisplaidCountries();
-  console.log(onDisplayCountries);
-  //clearDisplay();
+  //console.log(onDisplayCountries);
 
   if (isItAtoZ === true) {
     arrangeZtoA(); // undefined
     //console.log(onDisplayCountries);
-
+    clearDisplay();
     createTempDOM();
-    isItAtoZ = false;
+    console.log("after createtemp");
     console.log(countryItems);
+
+    removeTempDOM();
+    // console.log("after remove temp");
+    // console.log(countryItems);
+    isItAtoZ = false;
   } else {
     arrangeAtoZ(); // undefined
     clearDisplay();
-    //console.log(onDisplayCountries);
     createTempDOM();
-    isItAtoZ = true;
+
+    // console.log("after createtemp");
     console.log(countryItems);
+    removeTempDOM();
+    isItAtoZ = true;
   }
+  /*erase bottom*/
+
+  // console.log("after remove");
+  // for (let i = 1; i < countryItems.length; i++) {
+  //   console.log(countryItems[i]);
+  // }
 });
