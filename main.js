@@ -23,6 +23,8 @@ const display = document.querySelector(".search-result-display");
 const countryItems = display.childNodes;
 let allCountryArr = [];
 let onDisplayCountries = [];
+let tempItems;
+
 let isItAtoZ = true;
 
 //get countries data
@@ -92,22 +94,31 @@ const clearDisplay = () => {
   }
 };
 
-const removeTempDOM = () => {
-  if (countryItems.length > 251) {
-    onDisplayCountries.forEach(country => {
-      display.removeChild(country);
-    });
-  }
-  console.log(countryItems);
-};
-
-const createTempDOM = () => {
+const createTempItem = () => {
   onDisplayCountries.forEach(country => {
     let div = document.createElement("div");
     div.className = "countryTempItem";
     div.textContent = country.textContent;
     display.appendChild(div);
   });
+
+  tempItems = document.querySelectorAll(".countryTempItem");
+};
+
+const removeTempItem = () => {
+  if (countryItems.length > 251 && tempItems !== "undefined") {
+    for (let i = 0; i < tempItems.length; i++) {
+      display.removeChild(tempItems[i]);
+    }
+  }
+
+  /*
+  if (countryItems.length > 251) {
+    onDisplayCountries.forEach(country => {
+      display.removeChild(country);
+    });
+  }
+  */
 };
 
 // Arragne in ascending order
@@ -148,18 +159,21 @@ document.addEventListener("DOMContentLoaded", function() {
 input.addEventListener("keyup", function() {
   let apiEnding = `name/${input.value.toLowerCase()}`;
   let userInput = input.value.toUpperCase();
+  removeTempItem();
   getSearchingCountries(userInput);
   console.log(countryItems);
 });
 
 // ========== When the Search in Order button is clicked ========== //
 inOrderBtn.addEventListener("click", function() {
+  removeTempItem();
   let userInput = input.value.toUpperCase();
   searchingCountriesInOrder(userInput);
 });
 
 // When the Search in Order button is clicked
 anyPositionBtn.addEventListener("click", function() {
+  removeTempItem();
   console.log(onDisplayCountries);
   let userInput = input.value.toUpperCase();
   getSearchingCountries(userInput);
@@ -174,15 +188,16 @@ arrowBtn.addEventListener("click", function() {
 
   if (isItAtoZ === true) {
     arrangeZtoA();
+
     clearDisplay();
-    createTempDOM();
-    removeTempDOM();
+    createTempItem();
+
     isItAtoZ = false;
   } else {
     arrangeAtoZ();
     clearDisplay();
-    createTempDOM();
-    removeTempDOM();
+    createTempItem();
     isItAtoZ = true;
   }
+  console.log(countryItems);
 });
