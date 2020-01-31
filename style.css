@@ -63,6 +63,11 @@ body {
   font-size: 1rem;
 }
 
+#search-input:focus {
+  outline: none;
+  background: linear-gradient(45deg, #8917bd 0%, #46078e 100%);
+}
+
 ::placeholder {
   color: white;
 }
@@ -78,12 +83,26 @@ body {
 }
 
 .btn {
+  font-family: "Open Sans Condensed", sans-serif;
+  font-weight: 700;
   margin-left: 0.3rem;
   border-radius: 0.5rem;
   border: 1.5px solid;
   border-color: #00948d;
   color: #00948d;
   background-color: transparent;
+}
+
+.btn:hover {
+  border-color: #8917bd;
+  box-shadow: 3px 4px 50px -25px rgba(89, 82, 89, 1);
+  color: #8917bd;
+  transition: all 1s;
+}
+
+#arrowImg {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .search-result-display {

@@ -182,7 +182,8 @@ anyPositionBtn.addEventListener("click", function(e) {
 });
 
 // ========== Sort button ========== //
-arrowBtn.addEventListener("click", function() {
+arrowBtn.addEventListener("click", function(e) {
+  e.preventDefault();
   allCountryArr = [];
   onDisplayCountries = [];
   createCountryArr();
