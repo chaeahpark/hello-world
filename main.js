@@ -15,6 +15,7 @@ CHALLENGES
 */
 const form = document.querySelector("#search-form");
 const input = document.querySelector("#search-input");
+
 const inOrderBtn = document.querySelector("#inOrderBtn");
 const anyPositionBtn = document.querySelector("#anyPositionBtn");
 const arrowBtn = document.querySelector("#arrowBtn");
@@ -27,6 +28,25 @@ let tempItems;
 
 let isItAtoZ = true;
 
+const createTempItem = () => {
+  onDisplayCountries.forEach(country => {
+    let div = document.createElement("div");
+    div.className = "countryTempItem";
+    div.innerHTML = country.innerHTML;
+    display.appendChild(div);
+  });
+
+  tempItems = document.querySelectorAll(".countryTempItem");
+};
+
+const removeTempItem = () => {
+  if (countryItems.length > 251 && tempItems !== "undefined") {
+    for (let i = 0; i < tempItems.length; i++) {
+      display.removeChild(tempItems[i]);
+    }
+  }
+};
+
 //get countries data
 const getAllCountries = async () => {
   try {
@@ -34,15 +54,24 @@ const getAllCountries = async () => {
 
     let countryData = await countryRawData.json();
     let countryDisplay = await countryData.forEach(country => {
-      for (let key in country) {
-        if (key === "name") {
-          let uiCountryName = country.name.toUpperCase();
-          let newDiv = document.createElement("div");
-          newDiv.textContent = uiCountryName;
-          newDiv.className = "countryItem";
-          display.appendChild(newDiv);
-        }
-      }
+      let { name, alpha2Code, region, population } = country;
+      population = population.toLocaleString();
+
+      let uiCountryName = name.toUpperCase();
+      let countryCode = alpha2Code.toLowerCase();
+      let newDiv = document.createElement("div");
+      let newImg = document.createElement("img");
+      newDiv.textContent = uiCountryName;
+      newDiv.className = "countryItem";
+      newImg.setAttribute(
+        "src",
+        `https://www.countryflags.io/${countryCode}/flat/64.png`
+      );
+      newDiv.innerHTML = `<p class="countryInfo"><span class="countryName">${uiCountryName}</span> <br/>
+      Region: ${region} <br/> 
+      Population: ${population}</p>`;
+      newDiv.appendChild(newImg);
+      display.appendChild(newDiv);
     });
   } catch (err) {
     console.log(err);
@@ -52,7 +81,7 @@ const getAllCountries = async () => {
 //show searching results (matching regarless of location)
 const getSearchingCountries = input => {
   for (let i = 1; i < countryItems.length; i++) {
-    let countryItemText = countryItems[i].textContent;
+    let countryItemText = countryItems[i].firstChild.firstChild.textContent;
 
     if (countryItemText.includes(input) == true) {
       countryItems[i].style.display = "";
@@ -65,8 +94,8 @@ const getSearchingCountries = input => {
 // show searhing results (matching from the first location)
 const searchingCountriesInOrder = input => {
   for (let i = 1; i < countryItems.length; i++) {
-    let countryItemText = countryItems[i].textContent;
-
+    let countryItemText = countryItems[i].firstChild.firstChild.textContent;
+    console.log(countryItemText);
     if (countryItemText.indexOf(input) == 0) {
       countryItems[i].style.display = "";
     } else {
@@ -92,33 +121,6 @@ const clearDisplay = () => {
   for (let i = 1; i < countryItems.length; i++) {
     countryItems[i].style.display = "none";
   }
-};
-
-const createTempItem = () => {
-  onDisplayCountries.forEach(country => {
-    let div = document.createElement("div");
-    div.className = "countryTempItem";
-    div.textContent = country.textContent;
-    display.appendChild(div);
-  });
-
-  tempItems = document.querySelectorAll(".countryTempItem");
-};
-
-const removeTempItem = () => {
-  if (countryItems.length > 251 && tempItems !== "undefined") {
-    for (let i = 0; i < tempItems.length; i++) {
-      display.removeChild(tempItems[i]);
-    }
-  }
-
-  /*
-  if (countryItems.length > 251) {
-    onDisplayCountries.forEach(country => {
-      display.removeChild(country);
-    });
-  }
-  */
 };
 
 // Arragne in ascending order
@@ -157,7 +159,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // ========== In the input field ========== //
 input.addEventListener("keyup", function() {
-  let apiEnding = `name/${input.value.toLowerCase()}`;
   let userInput = input.value.toUpperCase();
   removeTempItem();
   getSearchingCountries(userInput);
@@ -165,17 +166,18 @@ input.addEventListener("keyup", function() {
 });
 
 // ========== When the Search in Order button is clicked ========== //
-inOrderBtn.addEventListener("click", function() {
-  removeTempItem();
+inOrderBtn.addEventListener("click", function(e) {
+  e.preventDefault();
   let userInput = input.value.toUpperCase();
+  // removeTempItem();
   searchingCountriesInOrder(userInput);
 });
 
 // When the Search in Order button is clicked
-anyPositionBtn.addEventListener("click", function() {
-  removeTempItem();
-  console.log(onDisplayCountries);
+anyPositionBtn.addEventListener("click", function(e) {
+  e.preventDefault();
   let userInput = input.value.toUpperCase();
+  removeTempItem();
   getSearchingCountries(userInput);
 });
 
@@ -188,10 +190,8 @@ arrowBtn.addEventListener("click", function() {
 
   if (isItAtoZ === true) {
     arrangeZtoA();
-
     clearDisplay();
     createTempItem();
-
     isItAtoZ = false;
   } else {
     arrangeAtoZ();
@@ -199,5 +199,4 @@ arrowBtn.addEventListener("click", function() {
     createTempItem();
     isItAtoZ = true;
   }
-  console.log(countryItems);
 });
