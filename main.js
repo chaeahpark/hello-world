@@ -51,11 +51,33 @@ const removeTempItem = () => {
 const getAllCountries = async () => {
   try {
     let countryRawData = await fetch("https://restcountries.eu/rest/v2/all");
-
     let countryData = await countryRawData.json();
     let countryDisplay = await countryData.forEach(country => {
-      let { name, alpha2Code, region, population } = country;
+      let { name, alpha2Code, capital, languages, population } = country;
+      let langs = "";
       population = population.toLocaleString();
+
+      //Extract languages
+      const extractlang = () => {
+        // If a country has only one language
+        if (languages.length === 1) {
+          for (let language of languages) {
+            lang = language.name;
+            langs = langs.concat(lang);
+          }
+        }
+        //If a country has two or more languages
+        else if (languages.length > 1) {
+          for (let language of languages) {
+            lang = language.name;
+            langs = langs.concat(lang + ", ");
+          }
+          langs = langs.slice(0, langs.length - 2);
+        }
+      };
+
+      extractlang();
+      console.log(langs);
 
       let uiCountryName = name.toUpperCase();
       let countryCode = alpha2Code.toLowerCase();
@@ -68,7 +90,8 @@ const getAllCountries = async () => {
         `https://www.countryflags.io/${countryCode}/flat/64.png`
       );
       newDiv.innerHTML = `<p class="countryInfo"><span class="countryName">${uiCountryName}</span> <br/>
-      Region: ${region} <br/> 
+      Capital: ${capital} <br/> 
+      Languages: ${langs}<br/>
       Population: ${population}</p>`;
       newDiv.appendChild(newImg);
       display.appendChild(newDiv);
@@ -91,6 +114,7 @@ const getSearchingCountries = input => {
   }
 };
 
+//TODO searchingCountries
 // show searhing results (matching from the first location)
 const searchingCountriesInOrder = input => {
   for (let i = 1; i < countryItems.length; i++) {
