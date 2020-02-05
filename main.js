@@ -13,6 +13,7 @@ https://developer.mozilla.org/en-US/docs/Web/API/NodeList
 CHALLENGES
 1. event listener does not work on nodelist
 */
+
 const form = document.querySelector("#search-form");
 const input = document.querySelector("#search-input");
 const countryBtn = document.querySelector("#countryBtn");
@@ -26,6 +27,8 @@ let onDisplayCountries = [];
 let tempItems;
 
 let isItAtoZ = true;
+let capitalAtoZ = false;
+let population0to9 = false;
 
 const createTempItem = () => {
   onDisplayCountries.forEach(country => {
@@ -146,11 +149,11 @@ const clearDisplay = () => {
 };
 
 // Arragne in ascending order
-const arrangeAtoZ = () => {
+const arrangeAtoZ = key => {
   //in ascending order
   onDisplayCountries = onDisplayCountries.sort((a, b) => {
-    let countryA = a.textContent;
-    let countryB = b.textContent;
+    let countryA = a[key];
+    let countryB = b[key];
 
     if (countryA < countryB) {
       return -1;
@@ -161,10 +164,11 @@ const arrangeAtoZ = () => {
 };
 
 //Arrange in descending order
-const arrangeZtoA = () => {
+const arrangeZtoA = key => {
   onDisplayCountries = onDisplayCountries.sort((a, b) => {
-    let countryA = a.textContent;
-    let countryB = b.textContent;
+    console.log(a.firstChild.children[2].textContent);
+    let countryA = a[key];
+    let countryB = b[key];
 
     if (countryB < countryA) {
       return -1;
@@ -172,6 +176,90 @@ const arrangeZtoA = () => {
       return 1;
     }
   });
+};
+
+const arrangeByCapital = () => {
+  if (capitalAtoZ === true) {
+    onDisplayCountries = onDisplayCountries.sort((a, b) => {
+      let countryA = a.firstChild.children[2].textContent;
+      let countryB = b.firstChild.children[2].textContent;
+
+      if (countryB < countryA) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    clearDisplay();
+    createTempItem();
+    capitalAtoZ = false;
+  } else if (capitalAtoZ === false) {
+    onDisplayCountries = onDisplayCountries.sort((a, b) => {
+      let countryA = a.firstChild.children[2].textContent;
+      let countryB = b.firstChild.children[2].textContent;
+
+      if (countryA < countryB) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    clearDisplay();
+    createTempItem();
+    capitalAtoZ = true;
+  }
+};
+
+const arrangeByPopulation = () => {
+  if (population0to9 === true) {
+    onDisplayCountries = onDisplayCountries.sort((a, b) => {
+      let populationA_Text = a.firstChild.children[5].textContent;
+      populationA_Text = populationA_Text.slice(11, populationA_Text.length);
+      populationA_Text = populationA_Text.replace(/\,/g, "");
+      let populationA = Number(populationA_Text);
+
+      let populationB_Text = b.firstChild.children[5].textContent;
+      populationB_Text = populationB_Text.slice(11, populationB_Text.length);
+      populationB_Text = populationB_Text.replace(/\,/g, "");
+      let populationB = Number(populationB_Text);
+
+      let countryA = populationA;
+      let countryB = populationB;
+
+      if (countryB < countryA) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    clearDisplay();
+    createTempItem();
+    population0to9 = false;
+  } else if (population0to9 === false) {
+    onDisplayCountries = onDisplayCountries.sort((a, b) => {
+      let populationA_Text = a.firstChild.children[5].textContent;
+      populationA_Text = populationA_Text.slice(11, populationA_Text.length);
+      populationA_Text = populationA_Text.replace(/\,/g, "");
+      let populationA = Number(populationA_Text);
+
+      let populationB_Text = b.firstChild.children[5].textContent;
+      populationB_Text = populationB_Text.slice(11, populationB_Text.length);
+      populationB_Text = populationB_Text.replace(/\,/g, "");
+      let populationB = Number(populationB_Text);
+
+      let countryA = populationA;
+      let countryB = populationB;
+
+      if (countryA < countryB) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    clearDisplay();
+    createTempItem();
+    population0to9 = true;
+  }
 };
 
 // ========== When DOM Loaded ========== //
@@ -191,16 +279,16 @@ countryBtn.addEventListener("click", function(e) {
   e.preventDefault();
   allCountryArr = [];
   onDisplayCountries = [];
-  createCountryArr();
-  filterDisplaidCountries();
+  createCountryArr(); //allCountryArr is created.
+  filterDisplaidCountries(); //onDisplayCountries is created.
   console.log(onDisplayCountries);
   if (isItAtoZ === true) {
-    arrangeZtoA();
+    arrangeZtoA("textContent"); //sort out with onDisplayCountries
     clearDisplay();
     createTempItem();
     isItAtoZ = false;
   } else {
-    arrangeAtoZ();
+    arrangeAtoZ("textContent");
     clearDisplay();
     createTempItem();
     isItAtoZ = true;
@@ -209,16 +297,20 @@ countryBtn.addEventListener("click", function(e) {
 
 // ========== When the Search in Order button is clicked ========== //
 capitalBtn.addEventListener("click", function(e) {
+  e.preventDefault();
   allCountryArr = [];
   onDisplayCountries = [];
-  createCountryArr();
-  filterDisplaidCountries();
+  createCountryArr(); //allCountryArr is created.
+  filterDisplaidCountries(); //onDisplayCountries is created.
+  arrangeByCapital();
 });
 
 // When the Search in Order button is clicked
 populationBtn.addEventListener("click", function(e) {
   e.preventDefault();
-  let userInput = input.value.toUpperCase();
-  removeTempItem();
-  getSearchingCountries(userInput);
+  allCountryArr = [];
+  onDisplayCountries = [];
+  createCountryArr(); //allCountryArr is created.
+  filterDisplaidCountries();
+  arrangeByPopulation();
 });
