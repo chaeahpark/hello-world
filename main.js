@@ -15,10 +15,9 @@ CHALLENGES
 */
 const form = document.querySelector("#search-form");
 const input = document.querySelector("#search-input");
-
-const inOrderBtn = document.querySelector("#inOrderBtn");
-const anyPositionBtn = document.querySelector("#anyPositionBtn");
-const arrowBtn = document.querySelector("#arrowBtn");
+const countryBtn = document.querySelector("#countryBtn");
+const capitalBtn = document.querySelector("#capitalBtn");
+const populationBtn = document.querySelector("#populationBtn");
 const display = document.querySelector(".search-result-display");
 // get access to live node vs static node
 const countryItems = display.childNodes;
@@ -77,7 +76,6 @@ const getAllCountries = async () => {
       };
 
       extractlang();
-      console.log(langs);
 
       let uiCountryName = name.toUpperCase();
       let countryCode = alpha2Code.toLowerCase();
@@ -90,14 +88,14 @@ const getAllCountries = async () => {
         `https://www.countryflags.io/${countryCode}/flat/64.png`
       );
       newDiv.innerHTML = `<p class="countryInfo"><span class="countryName">${uiCountryName}</span> <br/>
-      Capital: ${capital} <br/> 
+      <span class="countryCapital">Capital: ${capital}</span> <br/> 
       Languages: ${langs}<br/>
-      Population: ${population}</p>`;
+      <span class="countryPopulation">Population: ${population}</span></p>`;
       newDiv.appendChild(newImg);
       display.appendChild(newDiv);
     });
   } catch (err) {
-    console.log(err);
+    console.log("ERROR MESSAGE: " + err);
   }
 };
 
@@ -114,7 +112,7 @@ const getSearchingCountries = input => {
   }
 };
 
-//TODO searchingCountries
+//TODO this function is not necessary anymore
 // show searhing results (matching from the first location)
 const searchingCountriesInOrder = input => {
   for (let i = 1; i < countryItems.length; i++) {
@@ -186,33 +184,16 @@ input.addEventListener("keyup", function() {
   let userInput = input.value.toUpperCase();
   removeTempItem();
   getSearchingCountries(userInput);
-  console.log(countryItems);
-});
-
-// ========== When the Search in Order button is clicked ========== //
-inOrderBtn.addEventListener("click", function(e) {
-  e.preventDefault();
-  let userInput = input.value.toUpperCase();
-  // removeTempItem();
-  searchingCountriesInOrder(userInput);
-});
-
-// When the Search in Order button is clicked
-anyPositionBtn.addEventListener("click", function(e) {
-  e.preventDefault();
-  let userInput = input.value.toUpperCase();
-  removeTempItem();
-  getSearchingCountries(userInput);
 });
 
 // ========== Sort button ========== //
-arrowBtn.addEventListener("click", function(e) {
+countryBtn.addEventListener("click", function(e) {
   e.preventDefault();
   allCountryArr = [];
   onDisplayCountries = [];
   createCountryArr();
   filterDisplaidCountries();
-
+  console.log(onDisplayCountries);
   if (isItAtoZ === true) {
     arrangeZtoA();
     clearDisplay();
@@ -224,4 +205,20 @@ arrowBtn.addEventListener("click", function(e) {
     createTempItem();
     isItAtoZ = true;
   }
+});
+
+// ========== When the Search in Order button is clicked ========== //
+capitalBtn.addEventListener("click", function(e) {
+  allCountryArr = [];
+  onDisplayCountries = [];
+  createCountryArr();
+  filterDisplaidCountries();
+});
+
+// When the Search in Order button is clicked
+populationBtn.addEventListener("click", function(e) {
+  e.preventDefault();
+  let userInput = input.value.toUpperCase();
+  removeTempItem();
+  getSearchingCountries(userInput);
 });
