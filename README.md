@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Hello World
 
 Hello World is a web app to play around with 250 countries across the world. With this app, you can find interesting facts about some countries. For example, there are some countries where no one lives. Also, some countries does not have the capital city. If these are surprising news, try the app and discover more things about different countries!
@@ -72,4 +72,4 @@ Click [here](https://drive.google.com/file/d/1apOSc7jIZAEUIFt7ZIjJcm5InS0PDjvr/v
 - [Understanding Asyncronomous Javascript - Learn how JS works](https://blog.bitsrc.io/understanding-asynchronous-javascript-the-event-loop-74cd408419ff)
 - [Accessing the DOM is not equal accessing the DOM – live vs. static element collections](https://www.stefanjudis.com/blog/accessing-the-dom-is-not-equal-accessing-the-dom/)
 - [NodeList](https://developer.mozilla.org/en-US/docs/Web/API/NodeList)
->>>>>>> b2bb04b990557601c4f83164a5ca6bfc675d34fa
+
