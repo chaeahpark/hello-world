@@ -51,7 +51,13 @@ const getAllCountries = async () => {
     let countryData = await countryRawData.json();
     // Display countries on the browser with the data
     let countryDisplay = await countryData.forEach(country => {
-      let { name, alpha2Code, capital, languages, population } = country;
+      let {
+        name,
+        alpha2Code,
+        capital,
+        languages,
+        population
+      } = country;
       // Set the variable to extract language from an array of objects.
       let langs = "";
       // Transform population(type: number)
@@ -78,6 +84,8 @@ const getAllCountries = async () => {
       };
 
       extractlang();
+
+      // organize the function with using map 
 
       // Creating UI using the data created above.
       let uiCountryName = name.toUpperCase();
@@ -272,19 +280,19 @@ const arrangeByPopulation = () => {
 
 // Event Listeners
 // When DOM Loaded,
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   getAllCountries();
 });
 
 // When a user put inputs.
-input.addEventListener("keyup", function() {
+input.addEventListener("keyup", function () {
   let userInput = input.value.toUpperCase();
   removeTempItem();
   getSearchingCountries(userInput);
 });
 
 // When the country button is clicked.
-countryBtn.addEventListener("click", function(e) {
+countryBtn.addEventListener("click", function (e) {
   e.preventDefault();
   allCountryArr = [];
   onDisplayCountries = [];
@@ -294,7 +302,7 @@ countryBtn.addEventListener("click", function(e) {
 });
 
 // When capital button is clicked.
-capitalBtn.addEventListener("click", function(e) {
+capitalBtn.addEventListener("click", function (e) {
   e.preventDefault();
   allCountryArr = [];
   onDisplayCountries = [];
@@ -304,7 +312,7 @@ capitalBtn.addEventListener("click", function(e) {
 });
 
 // When the Search in Order button is clicked
-populationBtn.addEventListener("click", function(e) {
+populationBtn.addEventListener("click", function (e) {
   e.preventDefault();
   allCountryArr = [];
   onDisplayCountries = [];
